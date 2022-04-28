@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   todos: [],
+  selectedTextID: "",
 };
 
 export const todoSlice = createSlice({
@@ -24,9 +25,13 @@ export const todoSlice = createSlice({
       const newTodos = state.todos.filter((todo) => todo.id !== action.payload);
       state.todos = newTodos;
     },
+    selectText: (state, action) => {
+      state.selectedTextID = action.payload.selectedTextID;
+    },
   },
 });
 
-export const { addTodo, updateTodo, deleteTodo } = todoSlice.actions;
+export const { addTodo, updateTodo, deleteTodo, selectText } =
+  todoSlice.actions;
 
 export default todoSlice.reducer;
