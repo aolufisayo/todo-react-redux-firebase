@@ -1,6 +1,32 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useFirestore } from "react-redux-firebase";
+import { updateTodo } from "./todoSlice";
 
 export const Modal = () => {
+  const [editText, setEditText] = useState("");
+  const firestore = useFirestore();
+  const textID = useSelector((state) => state.todoApp.selectedTextID);
+  const dispatch = useDispatch();
+
+  const clearInputField = (event) => {
+    event.target.value = "";
+  };
+
+  const handleStoreUpdates = (id, newText) => {
+    firestore
+      .collection("todos")
+      .doc(id)
+      .update({ text: newText })
+      .then(() => {
+        dispatch(
+          updateTodo({
+            id: textID,
+            newText: editText,
+          })
+        );
+      });
+  };
   return (
     <>
       <div
@@ -27,9 +53,11 @@ export const Modal = () => {
             <div class="modal-body">
               <input
                 type="text"
+                onChange={(event) => setEditText(event.target.value)}
                 className="form-control form-control-lg"
                 id="exampleFormControlInput1"
                 placeholder="Edit Todo..."
+                onBlur={(event) => clearInputField(event)}
               ></input>
             </div>
             <div class="modal-footer">
@@ -40,7 +68,11 @@ export const Modal = () => {
               >
                 Close
               </button>
-              <button type="button" class="btn btn-primary">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onClick={() => handleStoreUpdates(textID, editText)}
+              >
                 Save changes
               </button>
             </div>
